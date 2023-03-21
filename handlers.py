@@ -17,7 +17,7 @@ async def download_mp3(update, context):
         await update.message.reply_text(str(e))
     else:
         await update.message.reply_text(wait_text)
-        message = f"You want to download audio \n\t {get_info(user_link)}"
+        message = get_info(user_link)
         await context.bot.edit_message_text(
             chat_id=update.message.chat_id,
             message_id=update.message.message_id+1,
