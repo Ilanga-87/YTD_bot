@@ -36,8 +36,8 @@ def download(url, ext):
             'format': 'bestaudio/best',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
-                'preferredcodec': ext, # wav, flac, mp3, aac, m4a, ogg, webm
-                'preferredquality': 'bestaudio', # 128, 192, 256, 320 // higher for flac etc
+                'preferredcodec': ext,
+                'preferredquality': 'bestaudio',
             # TODO: add logger and progress_hook
             }],
         }

@@ -1,6 +1,6 @@
 from errors import validate_input
 from static_text import welcome_text, help_text, undefined_command_text, wait_text
-from service import get_info
+from service import get_info, download
 from keyboards import formats_keyboard
 
 
@@ -9,7 +9,10 @@ async def start(update, context):
     await update.message.reply_text(welcome_text)
 
 
-async def download_mp3(update, context):
+yt_url = []
+
+
+async def audio(update, context):
     """Send a message when the command /download_mp3 is issued."""
     user_link = " ".join(context.args)
     try:
@@ -18,10 +21,11 @@ async def download_mp3(update, context):
         await update.message.reply_text(str(e))
     else:
         await update.message.reply_text(wait_text)
+        yt_url.append(user_link)
         message = get_info(user_link)
         await context.bot.edit_message_text(
             chat_id=update.message.chat_id,
-            message_id=update.message.message_id+1,
+            message_id=update.message.message_id + 1,
             text=message
         )
         await update.message.reply_text(
@@ -30,6 +34,12 @@ async def download_mp3(update, context):
         )
 
 
+async def select_format(update, context):
+    audio_format = update.callback_query["data"].split(".")[-1]
+    download(yt_url[0], audio_format)
+
+
+# Standard functionality
 async def helper(update, context):
     text = help_text
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
