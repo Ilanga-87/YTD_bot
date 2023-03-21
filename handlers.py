@@ -1,15 +1,34 @@
+from errors import validate_input
+from static_text import welcome_text, help_text, undefined_command_text, wait_text
+from service import get_info
+
+
 async def start(update, context):
     """Send a message when the command /start is issued."""
-    await update.message.reply_text(
-        "Hi! I'm a bot that can help you to find the best place to eat food. "
-        "I can help you to find the best place to eat food. "
-    )
+    await update.message.reply_text(welcome_text)
 
 
 async def download_mp3(update, context):
     """Send a message when the command /download_mp3 is issued."""
     user_link = " ".join(context.args)
-    await update.message.reply_text("Your link: " + user_link)
-    # await update.message.reply_text(
-    #     "Here is the link to download the mp3 file."
-    # )
+    try:
+        validate_input(user_link)
+    except ValueError as e:
+        await update.message.reply_text(str(e))
+    else:
+        await update.message.reply_text(wait_text)
+        message = f"You want to download audio \n\t {get_info(user_link)}"
+        await context.bot.edit_message_text(
+            chat_id=update.message.chat_id,
+            message_id=update.message.message_id+1,
+            text=message)
+
+
+async def helper(update, context):
+    text = help_text
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
+
+
+async def undefined_commands(update, context):
+    text = undefined_command_text
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
