@@ -1,6 +1,7 @@
 from errors import validate_input
 from static_text import welcome_text, help_text, undefined_command_text, wait_text
 from service import get_info
+from keyboards import formats_keyboard
 
 
 async def start(update, context):
@@ -21,7 +22,12 @@ async def download_mp3(update, context):
         await context.bot.edit_message_text(
             chat_id=update.message.chat_id,
             message_id=update.message.message_id+1,
-            text=message)
+            text=message
+        )
+        await update.message.reply_text(
+            text="Select preferred audio format to download: ",
+            reply_markup=formats_keyboard()
+        )
 
 
 async def helper(update, context):

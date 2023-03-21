@@ -10,15 +10,14 @@ def get_info(url):
     try:
         with YoutubeDL(ytdl_opts) as ydl:
             video_info = ydl.extract_info(url, download=False)
-            print(video_info)
-            video_id = video_info['id']
             title = video_info['title']
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
-            return f"You want to download audio \n\t {title}: {output_duration}"
+            return f"You want to download audio \n{title}: {output_duration}"
 
-    except YoutubeDLError:
-        return f"URL {url} looks truncated. Please try to copy it again."
+    except YoutubeDLError as e:
+        error_text = str(e).split(": ")[-1].strip()
+        return f"{error_text} Please check copied URL."
 
 
 def get_output_duration(seconds: int):

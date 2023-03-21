@@ -18,6 +18,8 @@ wait_text = """
 Please wait a moment...
 """
 
+audio_formats = ['mp3', 'wav', "flac", "aac", "m4a", "ogg", "webm"]
+
 help_text = """
 You can start with /download_mp3 command and link
 """
