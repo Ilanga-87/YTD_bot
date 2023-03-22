@@ -25,7 +25,7 @@ async def audio(update, context):
         message = get_info(user_link)
         await context.bot.edit_message_text(
             chat_id=update.message.chat_id,
-            message_id=update.message.message_id + 1,
+            message_id=update.message.message_id + 1,  # +1
             text=message
         )
         await update.message.reply_text(
@@ -35,12 +35,12 @@ async def audio(update, context):
 
 
 async def select_format(update, context):
-    await update.callback_query.message.reply_text(wait_text)
+    await update.callback_query.message.edit_text(wait_text)
     audio_format = update.callback_query["data"].split(".")[-1]
     audio_file = download(yt_url[0], audio_format)
     await context.bot.edit_message_text(
         chat_id=update.callback_query.message.chat_id,
-        message_id=update.callback_query.message.message_id + 1,
+        message_id=update.callback_query.message.message_id,  # +1
         text="It's ready:"
     )
     print(audio_file)
