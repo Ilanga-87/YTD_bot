@@ -47,8 +47,8 @@ def download(url, ext):
                 'preferredcodec': ext,
                 'preferredquality': 'bestaudio',
             }],
-            'logger': MyLogger(),
-            'progress_hooks': [my_hook],
+            'logger': YTDLogger(),
+            'progress_hooks': [progress_hook],
         }
     try:
         with YoutubeDL(ytdl_opts) as ydl:
@@ -62,7 +62,7 @@ def download(url, ext):
         return f"{error_text}"
 
 
-class MyLogger(object):
+class YTDLogger(object):
     def debug(self, msg):
         # For compatibility with youtube-dl, both debug and info are passed into debug
         # You can distinguish them by the prefix '[debug] '
@@ -81,16 +81,16 @@ class MyLogger(object):
         print(msg)
 
 
-def my_hook(file):
+def progress_hook(file):
     if file['status'] == 'finished':
         print(f"Done {file['filename']} downloading, now post-processing ...")
     if file['status'] == 'downloading':
         progress = file['downloaded_bytes'] * 100 / file['total_bytes_estimate']
-        print(f'Downloading: {file["filename"]}. '
-              f'Progress: {progress}%'
-              # f'Speed {file["speed"]}. '
-              # f'Elapsed {file["elapsed"]}. '
-              # f'ETA: {file["eta"]}. '
+        print(f"Downloading: {file['filename']}. "
+              f"Progress: {progress}%. "
+              # f"Speed {file['speed']}. "
+              # f"Elapsed {file['elapsed']}. "
+              # f"ETA: {file['eta']}. "
               )
         pass
 
