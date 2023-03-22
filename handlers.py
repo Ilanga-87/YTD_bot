@@ -38,10 +38,11 @@ async def select_format(update, context):
     await update.callback_query.message.edit_text(wait_text)
     audio_format = update.callback_query["data"].split(".")[-1]
     audio_file = download(yt_url[0], audio_format)
+    yt_url.pop()
     await context.bot.edit_message_text(
         chat_id=update.callback_query.message.chat_id,
         message_id=update.callback_query.message.message_id,  # +1
-        text="It's ready:"
+        text="It's ready"
     )
     print(audio_file)
     # await update.callback_query.message.reply_audio(audio_file)

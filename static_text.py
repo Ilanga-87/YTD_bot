@@ -15,7 +15,7 @@ If you need more information please look at /help.
 """
 
 wait_text = """
-Please wait a moment...
+Please wait a moment. It can take more time if selected file is big or if YouTube servers are too buzy.
 """
 
 help_text = """

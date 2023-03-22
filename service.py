@@ -1,6 +1,5 @@
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import YoutubeDLError
-import yt_dlp
 
 
 def get_info(url):
@@ -10,18 +9,26 @@ def get_info(url):
         }
     try:
         with YoutubeDL(ytdl_opts) as ydl:
-            video_info = ydl.extract_info(url, download=False)
+            track_url = extract_single_from_playlist(url)
+            video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
-            return f"You want to download audio \n{title}: {output_duration}"
+            return f"You want to download audio \n{title} ({output_duration})"
 
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
         return f"{error_text} Please check copied URL."
 
 
+def extract_single_from_playlist(video_url):
+    """Get URL to single track from playlist, channel or another instance."""
+    splitted_url = video_url.split('&')
+    return splitted_url[0]
+
+
 def get_output_duration(seconds: int):
+    """Get output duration from seconds."""
     hours = seconds // 3600
     seconds %= 3600
     minutes = seconds // 60
@@ -39,19 +46,20 @@ def download(url, ext):
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': ext,
                 'preferredquality': 'bestaudio',
-            # TODO: add logger and progress_hook
             }],
             'logger': MyLogger(),
             'progress_hooks': [my_hook],
         }
     try:
         with YoutubeDL(ytdl_opts) as ydl:
-            video_info = ydl.extract_info(url, download=False)
+            track_url = extract_single_from_playlist(url)
+            video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
-            ydl.download([url])
+            ydl.download([track_url])
             return f'uploads/audio/{title}.{ext}'
-    except YoutubeDLError:
-        pass
+    except YoutubeDLError as e:
+        error_text = str(e).split(": ")[-1].strip()
+        return f"{error_text}"
 
 
 class MyLogger(object):
@@ -77,12 +85,12 @@ def my_hook(file):
     if file['status'] == 'finished':
         print(f"Done {file['filename']} downloading, now post-processing ...")
     if file['status'] == 'downloading':
+        progress = file['downloaded_bytes'] * 100 / file['total_bytes_estimate']
         print(f'Downloading: {file["filename"]}. '
-              f'Downloaded {file["downloaded_bytes"]}. '
-              f'Total {file["total_bytes_estimate"]}'
-              f'Speed {file["speed"]}. '
-              f'Elapsed {file["elapsed"]}. '
-              f'ETA: {file["eta"]}. '
+              f'Progress: {progress}%'
+              # f'Speed {file["speed"]}. '
+              # f'Elapsed {file["elapsed"]}. '
+              # f'ETA: {file["eta"]}. '
               )
         pass
 
@@ -90,7 +98,6 @@ def my_hook(file):
 if __name__ == '__main__':
     get_info("https://www.youtube.com/watch?v=ktvTqknDobU")
 
-    help(yt_dlp.YoutubeDL)
     progress_hooks_info = """
     progress_hooks:    A list of functions that get called on download
  |                     progress, with a dictionary with the entries
