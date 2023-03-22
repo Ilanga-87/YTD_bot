@@ -43,10 +43,14 @@ def download(url, ext):
         }
     try:
         with YoutubeDL(ytdl_opts) as ydl:
+            video_info = ydl.extract_info(url, download=False)
+            title = video_info['title']
             ydl.download([url])
-            return {"status": True}
+            return f'uploads/audio/{title}.{ext}'
     except YoutubeDLError:
         pass
+
+
 
 
 if __name__ == '__main__':
