@@ -1,4 +1,6 @@
 version: '3.8'
 services:
-  web:
+  bot:
     build: .
+    volumes:
+      - ./uploads/audio:/bot/uploads/audio

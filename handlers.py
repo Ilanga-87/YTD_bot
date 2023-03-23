@@ -2,14 +2,12 @@ from errors import validate_input
 from static_text import welcome_text, help_text, undefined_command_text, wait_text
 from service import get_info, download
 from keyboards import formats_keyboard
+from manage_data import yt_url
 
 
 async def start(update, context):
     """Send a message when the command /start is issued."""
     await update.message.reply_text(welcome_text)
-
-
-yt_url = []
 
 
 async def audio(update, context):
@@ -45,6 +43,9 @@ async def select_format(update, context):
         text="It's ready"
     )
     print(audio_file)
+    await context.bot.send_document(chat_id=update.callback_query.message.chat_id,
+                                    document=audio_file,
+                                    )
     # await update.callback_query.message.reply_audio(audio_file)
 
 

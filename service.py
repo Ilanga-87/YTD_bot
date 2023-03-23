@@ -1,12 +1,15 @@
+import os
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import YoutubeDLError
+
+from manage_data import yt_url
 
 
 def get_info(url):
     ytdl_opts = {
-            "quiet": True,
-            'cachedir': False,
-        }
+        "quiet": True,
+        'cachedir': False,
+    }
     try:
         with YoutubeDL(ytdl_opts) as ydl:
             track_url = extract_single_from_playlist(url)
@@ -38,25 +41,31 @@ def get_output_duration(seconds: int):
 
 def download(url, ext):
     ytdl_opts = {
-            "quiet": True,
-            'cachedir': False,
-            'outtmpl': f'uploads/audio/%(title)s.%(ext)s',
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': ext,
-                'preferredquality': 'bestaudio',
-            }],
-            'logger': YTDLogger(),
-            'progress_hooks': [progress_hook],
-        }
+        "quiet": True,
+        'cachedir': False,
+        'outtmpl': f'uploads/audio/%(title)s.%(ext)s',
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': ext,
+            'preferredquality': 'bestaudio',
+        }],
+        'logger': YTDLogger(),
+        'progress_hooks': [progress_hook],
+    }
     try:
         with YoutubeDL(ytdl_opts) as ydl:
             track_url = extract_single_from_playlist(url)
             video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
+            new_title = title.replace("[", "").replace("]", "").replace("/", "")
             ydl.download([track_url])
-            return f'uploads/audio/{title}.{ext}'
+            file = f'D:/PyCharm/Bots/YTD_bot/uploads/audio/{title}.{ext}'
+            # new_file = f'D:/PyCharm/Bots/YTD_bot/uploads/audio/{new_title}.{ext}'
+            # old_path = file[:]
+            # new_path = new_file[:]
+            # os.rename(old_path, new_path)
+            return file
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
         return f"{error_text}"
