@@ -3,4 +3,7 @@ services:
   bot:
     build: .
     volumes:
-      - ./uploads/audio:/bot/uploads/audio
+      - media_volume:/bot/uploads/audio
+
+volumes:
+  media_volume:

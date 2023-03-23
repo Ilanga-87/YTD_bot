@@ -15,6 +15,8 @@ def get_info(url):
             track_url = extract_single_from_playlist(url)
             video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
+            new_title = title.replace("[", "").replace("]", "").replace("/", "")
+            yt_url.append(new_title)
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
             return f"You want to download audio \n{title} ({output_duration})"
@@ -39,11 +41,11 @@ def get_output_duration(seconds: int):
     return f'{hours}:{minutes}:{seconds}s' if hours > 0 else f'{minutes}:{seconds}'
 
 
-def download(url, ext):
+def download(url, title, ext):
     ytdl_opts = {
         "quiet": True,
         'cachedir': False,
-        'outtmpl': f'uploads/audio/%(title)s.%(ext)s',
+        'outtmpl': f'uploads/audio/{title}.%(ext)s',
         'format': 'bestaudio/best',
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
@@ -65,7 +67,7 @@ def download(url, ext):
             # old_path = file[:]
             # new_path = new_file[:]
             # os.rename(old_path, new_path)
-            return file
+            return f"uploads/audio/{new_title}.{ext}"
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
         return f"{error_text}"
