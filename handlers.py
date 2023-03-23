@@ -12,6 +12,7 @@ async def start(update, context):
 
 async def audio(update, context):
     """Send a message when the command /download_mp3 is issued."""
+    yt_url.clear()
     user_link = " ".join(context.args)
     try:
         validate_input(user_link)

@@ -15,7 +15,7 @@ def get_info(url):
             track_url = extract_single_from_playlist(url)
             video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
-            new_title = title.replace("[", "").replace("]", "").replace("/", "")
+            new_title = title.replace("/", "")
             yt_url.append(new_title)
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
@@ -60,7 +60,7 @@ def download(url, title, ext):
             track_url = extract_single_from_playlist(url)
             video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
-            new_title = title.replace("[", "").replace("]", "").replace("/", "")
+            new_title = title.replace("/", "")
             ydl.download([track_url])
             file = f'D:/PyCharm/Bots/YTD_bot/uploads/audio/{title}.{ext}'
             # new_file = f'D:/PyCharm/Bots/YTD_bot/uploads/audio/{new_title}.{ext}'
