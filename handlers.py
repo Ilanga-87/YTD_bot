@@ -1,5 +1,3 @@
-from yt_dlp.utils import YoutubeDLError
-
 from errors import validate_input, is_supported
 from static_text import messages, welcome_text, wait_text, help_text, undefined_command_text, messages
 from service import get_info, download
@@ -38,7 +36,7 @@ async def audio_url_handler(update, context):
     # print(update.message.date)
     id_dict[message_id] = []
     id_dict[message_id].append(user_link)
-    with open("log_file.csv", "a") as log:
+    with open("log_file.csv", "a", encoding="windows-1251") as log:
         log.write(f"{date},{nick},{name},{user_id},{lang},{user_link}\n")
     if is_supported(user_link):
         await update.message.reply_text(messages[manage_data.selected_language]["wait_text"])
@@ -92,7 +90,7 @@ async def format_download_handler(update, context):
                                     )
     id_dict[message_id-2].append("Success")
     print(id_dict)
-    with open("log_success.csv", "a") as log:
+    with open("log_success.csv", "a", encoding="windows-1251") as log:
         for k, v in id_dict.items():
             k = str(k)
             if len(v) == 3:
