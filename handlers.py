@@ -1,13 +1,29 @@
-from errors import validate_input
-from static_text import messages, welcome_text, wait_text, help_text, undefined_command_text
+from yt_dlp.utils import YoutubeDLError
+
+from errors import validate_input, is_supported
+from static_text import messages, welcome_text, wait_text, help_text, undefined_command_text, messages
 from service import get_info, download
-from keyboards import formats_keyboard
+from keyboards import formats_keyboard, lang_keyboard
 from manage_data import id_dict
+import manage_data
 
 
 async def start(update, context):
     """Send a message when the command /start is issued."""
-    await update.message.reply_text(welcome_text)
+    user_lang = update.message.from_user.language_code
+    if user_lang not in messages:
+        user_lang = 'en'
+    await update.message.reply_text(messages[user_lang]["welcome_text"])
+    await update.message.reply_text(
+        text=messages[user_lang]["select_lang_text"],
+        reply_markup=lang_keyboard()
+    )
+
+
+async def language_handler(update, context):
+    selected_lang = update.callback_query["data"].split(".")[-1]
+    manage_data.selected_language = selected_lang
+    await update.callback_query.message.edit_text(messages[manage_data.selected_language]["selected_lang_text"])
 
 
 async def audio_url_handler(update, context):
@@ -24,22 +40,39 @@ async def audio_url_handler(update, context):
     id_dict[message_id].append(user_link)
     with open("log_file.csv", "a") as log:
         log.write(f"{date},{nick},{name},{user_id},{lang},{user_link}\n")
-    try:
-        validate_input(user_link)
-    except ValueError as e:
-        await update.message.reply_text(str(e))
-    else:
-        await update.message.reply_text(wait_text)
+    if is_supported(user_link):
+        await update.message.reply_text(messages[manage_data.selected_language]["wait_text"])
         message = get_info(message_id, user_link)
         await context.bot.edit_message_text(
             chat_id=update.message.chat_id,
             message_id=update.message.message_id + 1,  # +1
             text=message
         )
-        await update.message.reply_text(
-            text="Select preferred audio format to download: ",
-            reply_markup=formats_keyboard()
-        )
+        # await update.message.reply_text(
+        #     text=messages[manage_data.selected_language]["select_format_text"],
+        #     reply_markup=formats_keyboard()
+        # )
+    else:
+        await update.message.reply_text(messages[manage_data.selected_language]["check_url_text"])
+
+    # try:
+    #     is_supported(user_link)
+    # except ValueError as e:
+    #     await update.message.reply_text(str(e))
+    # except YoutubeDLError as e:
+    #     await update.message.reply_text(str(e))
+    # else:
+    #     await update.message.reply_text(messages[manage_data.selected_language]["wait_text"])
+    #     message = get_info(message_id, user_link)
+    #     await context.bot.edit_message_text(
+    #         chat_id=update.message.chat_id,
+    #         message_id=update.message.message_id + 1,  # +1
+    #         text=message
+    #     )
+    #     await update.message.reply_text(
+    #         text=messages[manage_data.selected_language]["select_format_text"],
+    #         reply_markup=formats_keyboard()
+    #     )
 
 
 async def format_download_handler(update, context):
@@ -50,7 +83,7 @@ async def format_download_handler(update, context):
     await context.bot.edit_message_text(
         chat_id=update.callback_query.message.chat_id,
         message_id=update.callback_query.message.message_id,  # +1
-        text="It's ready"
+        text=messages[manage_data.selected_language]["ready_notification_text"]
     )
     print(audio_file)
 
@@ -76,10 +109,10 @@ async def format_download_handler(update, context):
 
 # Standard functionality
 async def helper(update, context):
-    text = help_text
+    text = messages[manage_data.selected_language]["help_text"]
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)
 
 
 async def undefined_commands(update, context):
-    text = undefined_command_text
+    text = messages[manage_data.selected_language]["undefined_command_text"]
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text)

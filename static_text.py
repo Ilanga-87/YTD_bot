@@ -12,9 +12,15 @@ messages = {
     "en": {
         "welcome_text": """
         Hi! I will download for you sound from YouTube videos in any of next format: mp3, wav, flac, aac, m4a.
-        To start you should input youtube url.
-        Than select necessary format and enjoy!
-        If you need more information please look at /help.
+To start you should input youtube url.
+Than select necessary format and enjoy!
+If you need more information please look at /help.
+        """,
+        "select_lang_text": """
+        Select language: 
+        """,
+        "selected_lang_text": """
+        You selected English. You can change it by /start command.
         """,
         "wait_text": """
         Please wait a moment. It can take more time if selected file is big or if YouTube servers are too busy.
@@ -32,7 +38,7 @@ messages = {
         Select preferred audio format to download: 
         """,
         "audio_name_text": """
-        You want to download audio \n
+        You want to download audio 
         """,
         "check_url_text": """
         Please check copied URL.
@@ -41,8 +47,14 @@ messages = {
     "ru": {
         "welcome_text": """
         Приветствую! Здесь вы можете скачать аудио с YouTube в любом из этих форматов: mp3, wav, flac, aac, m4a.
-        Чтобы начать, просто отправьте боту ссылку. Потом выберите формат и немного подождите.
-        Если вам нужна помощь, в любой момент отправьте боту команду /help.
+Чтобы начать, просто отправьте боту ссылку. Потом выберите формат и немного подождите.
+Если вам нужна помощь, в любой момент отправьте боту команду /help.
+        """,
+        "select_lang_text": """
+        Выберите язык: 
+        """,
+        "selected_lang_text": """
+        Вы выбрали русский. Вы можете изменить язык, набрав команду /start.
         """,
         "wait_text": """
         Ваш запрос обрабатывается... Это может занять некоторое время, если файл большой или сервера загружены.
@@ -60,7 +72,7 @@ messages = {
         Выберите формат для вашего аудио файла перед скачиванием: 
         """,
         "audio_name_text": """
-        Вы выбрали файл \n
+        Вы выбрали файл 
         """,
         "check_url_text": """
         Пожалуйста, вставьте правильную ссылку на YouTube.

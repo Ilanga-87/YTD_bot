@@ -5,7 +5,9 @@ import csv
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import YoutubeDLError
 
+from static_text import messages
 from manage_data import id_dict
+import manage_data
 
 
 def get_info(message_id, url):
@@ -22,11 +24,11 @@ def get_info(message_id, url):
             id_dict[message_id].append(new_title)
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
-            return f"You want to download audio \n{title} ({output_duration})"
+            return f"{messages[manage_data.selected_language]['audio_name_text']} \n{title} ({output_duration})"
 
     except YoutubeDLError as e:
-        error_text = str(e).split(": ")[-1].strip()
-        return f"{error_text} Please check copied URL."
+        # error_text = str(e).split(": ")[-1].strip()
+        return f"{messages[manage_data.selected_language]['check_url_text']}"
 
 
 def extract_single_from_playlist(video_url):
