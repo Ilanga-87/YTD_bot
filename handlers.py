@@ -46,10 +46,10 @@ async def audio_url_handler(update, context):
             message_id=update.message.message_id + 1,  # +1
             text=message
         )
-        # await update.message.reply_text(
-        #     text=messages[manage_data.selected_language]["select_format_text"],
-        #     reply_markup=formats_keyboard()
-        # )
+        await update.message.reply_text(
+            text=messages[manage_data.selected_language]["select_format_text"],
+            reply_markup=formats_keyboard()
+        )
     else:
         await update.message.reply_text(messages[manage_data.selected_language]["check_url_text"])
 
