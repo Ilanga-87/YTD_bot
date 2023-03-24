@@ -59,6 +59,16 @@ async def format_download_handler(update, context):
                                     )
     id_dict[message_id-2].append("Success")
     print(id_dict)
+    with open("log_success.csv", "a") as log:
+        for k, v in id_dict.items():
+            k = str(k)
+            if len(v) == 3:
+                stroke = f"{str(k)},{v[0]},{v[1]},{v[2]}\n"
+                log.write(stroke)
+            if len(v) == 2:
+                stroke = f"{str(k)},{v[0]},{v[1]}\n"
+                log.write(stroke)
+
     # with open("log_file.csv", "a") as log:
     #     log.write("Success!\n")
     # print("Success!")

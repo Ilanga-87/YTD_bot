@@ -70,17 +70,17 @@ messages = {
 
 welcome_text = """
 Hi! I will download for you sound from YouTube videos in any of next format: mp3, wav, flac, aac, m4a.
-To start you should input command /audio and youtube url.
+To start you should input youtube url.
 Than select necessary format and enjoy!
 If you need more information please look at /help.
 """
 
 wait_text = """
-Please wait a moment. It can take more time if selected file is big or if YouTube servers are too buzy.
+Please wait a moment. It can take more time if selected file is big or if YouTube servers are too busy.
 """
 
 help_text = """
-You can start download with /audio command and link. Then you should select audio format for your file.
+You can start download just by pasting YouTube url. Then you should select audio format for your file.
 """
 
 undefined_command_text = """
