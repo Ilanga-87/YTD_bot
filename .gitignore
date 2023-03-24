@@ -3,3 +3,4 @@
 /__pycache__
 /uploads
 log.py
+log_file.csv

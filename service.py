@@ -1,4 +1,7 @@
 import os
+import re
+import csv
+
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import YoutubeDLError
 
@@ -15,7 +18,7 @@ def get_info(url):
             track_url = extract_single_from_playlist(url)
             video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
-            new_title = title.replace("/", "")
+            new_title = clear_title(title)
             yt_url.append(new_title)
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
@@ -41,6 +44,18 @@ def get_output_duration(seconds: int):
     return f'{hours}:{minutes}:{seconds}s' if hours > 0 else f'{minutes}:{seconds}'
 
 
+def check_file_on_server(filename):
+    folder = "uploads/audio/"
+    file_path = os.path.join(folder, filename)
+
+    if os.path.isfile(file_path):
+        print(f"File '{filename}' exists in folder '{folder}'")
+        return True
+    else:
+        print(f"File '{filename}' does not exist in folder '{folder}'")
+        return False
+
+
 def download(url, title, ext):
     ytdl_opts = {
         "quiet": True,
@@ -58,11 +73,10 @@ def download(url, title, ext):
     try:
         with YoutubeDL(ytdl_opts) as ydl:
             track_url = extract_single_from_playlist(url)
-            video_info = ydl.extract_info(track_url, download=False)
-            title = video_info['title']
-            new_title = title.replace("/", "")
-            ydl.download([track_url])
-            return f"uploads/audio/{new_title}.{ext}"
+            if not check_file_on_server(title + '.' + ext):
+            # TODO: check existing file
+                ydl.download([track_url])
+            return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
         return f"{error_text}"
@@ -99,6 +113,13 @@ def progress_hook(file):
               # f"ETA: {file['eta']}. "
               )
         pass
+
+
+def clear_title(title_string):
+    output_string = re.sub(r"[^a-zA-Zа-яА-Я0-9\s]+", "", title_string)  # Remove non-alphanumeric characters
+    output_string = re.sub(r"\s{2,}", " ", output_string)  # Replace multiple spaces with single space
+    output_string = re.sub(r"\s+", "_", output_string)  # Replace single spaces with underscore
+    return output_string
 
 
 if __name__ == '__main__':
