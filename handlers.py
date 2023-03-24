@@ -86,7 +86,8 @@ async def format_download_handler(update, context):
     print(audio_file)
 
     await context.bot.send_document(chat_id=update.callback_query.message.chat_id,
-                                    document=audio_file
+                                    document=audio_file,
+                                    timeout=7200
                                     )
     id_dict[message_id-2].append("Success")
     print(id_dict)

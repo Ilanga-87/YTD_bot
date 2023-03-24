@@ -43,7 +43,7 @@ def get_output_duration(seconds: int):
     seconds %= 3600
     minutes = seconds // 60
     seconds %= 60
-    return f'{hours}:{minutes}:{seconds}s' if hours > 0 else f'{minutes}:{seconds}'
+    return f'{hours:02}:{minutes:02}:{seconds:02}' if hours > 0 else f'{minutes:02}:{seconds:02}'
 
 
 def check_file_on_server(filename):
