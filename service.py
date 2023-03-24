@@ -62,11 +62,6 @@ def download(url, title, ext):
             title = video_info['title']
             new_title = title.replace("/", "")
             ydl.download([track_url])
-            file = f'D:/PyCharm/Bots/YTD_bot/uploads/audio/{title}.{ext}'
-            # new_file = f'D:/PyCharm/Bots/YTD_bot/uploads/audio/{new_title}.{ext}'
-            # old_path = file[:]
-            # new_path = new_file[:]
-            # os.rename(old_path, new_path)
             return f"uploads/audio/{new_title}.{ext}"
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
