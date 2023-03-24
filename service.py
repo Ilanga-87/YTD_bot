@@ -5,10 +5,10 @@ import csv
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import YoutubeDLError
 
-from manage_data import yt_url
+from manage_data import id_dict
 
 
-def get_info(url):
+def get_info(message_id, url):
     ytdl_opts = {
         "quiet": True,
         'cachedir': False,
@@ -19,7 +19,7 @@ def get_info(url):
             video_info = ydl.extract_info(track_url, download=False)
             title = video_info['title']
             new_title = clear_title(title)
-            yt_url.append(new_title)
+            id_dict[message_id].append(new_title)
             duration = video_info['duration']
             output_duration = get_output_duration(duration)
             return f"You want to download audio \n{title} ({output_duration})"
@@ -49,10 +49,8 @@ def check_file_on_server(filename):
     file_path = os.path.join(folder, filename)
 
     if os.path.isfile(file_path):
-        print(f"File '{filename}' exists in folder '{folder}'")
         return True
     else:
-        print(f"File '{filename}' does not exist in folder '{folder}'")
         return False
 
 
@@ -74,7 +72,6 @@ def download(url, title, ext):
         with YoutubeDL(ytdl_opts) as ydl:
             track_url = extract_single_from_playlist(url)
             if not check_file_on_server(title + '.' + ext):
-            # TODO: check existing file
                 ydl.download([track_url])
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:

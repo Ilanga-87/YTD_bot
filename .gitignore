@@ -4,3 +4,4 @@
 /uploads
 log.py
 log_file.csv
+log_success.csv
