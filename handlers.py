@@ -1,3 +1,6 @@
+from yt_dlp.utils import YoutubeDLError
+from telegram.error import NetworkError, TelegramError, BadRequest
+
 from errors import validate_input, is_supported
 from static_text import messages, welcome_text, wait_text, help_text, undefined_command_text, messages
 from service import get_info, download
@@ -78,17 +81,25 @@ async def format_download_handler(update, context):
     await update.callback_query.message.edit_text(wait_text)
     audio_format = update.callback_query["data"].split(".")[-1]
     audio_file = download(id_dict[message_id-2][0], id_dict[message_id-2][1], audio_format)
-    await context.bot.edit_message_text(
-        chat_id=update.callback_query.message.chat_id,
-        message_id=update.callback_query.message.message_id,  # +1
-        text=messages[manage_data.selected_language]["ready_notification_text"]
-    )
-    print(audio_file)
 
-    await context.bot.send_document(chat_id=update.callback_query.message.chat_id,
-                                    document=audio_file,
-                                    timeout=7200
-                                    )
+    print(audio_file)
+    try:
+        await context.bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id,  # +1
+            text=messages[manage_data.selected_language]["ready_notification_text"]
+        )
+        await context.bot.send_document(chat_id=update.callback_query.message.chat_id,
+                                        document=audio_file,
+                                        read_timeout=7200,
+                                        write_timeout=7200
+                                        )
+    except BadRequest:
+        await context.bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id,  # +1
+            text=messages[manage_data.selected_language]["wrong_url_text"]
+        )
     id_dict[message_id-2].append("Success")
     print(id_dict)
     with open("log_success.csv", "a", encoding="windows-1251") as log:

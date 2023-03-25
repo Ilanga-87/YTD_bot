@@ -77,8 +77,8 @@ def download(url, title, ext):
                 ydl.download([track_url])
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
-        error_text = str(e).split(": ")[-1].strip()
-        return f"{error_text}"
+        # error_text = str(e).split(": ")[-1].strip()
+        return f"{messages[manage_data.selected_language]['you_tube_error_text']}"
 
 
 class YTDLogger(object):
@@ -105,17 +105,19 @@ def progress_hook(file):
         print(f"Done {file['filename']} downloading, now post-processing ...")
     if file['status'] == 'downloading':
         progress = file['downloaded_bytes'] * 100 / file['total_bytes_estimate']
-        print(f"Downloading: {file['filename']}. "
-              f"Progress: {progress}%. "
-              # f"Speed {file['speed']}. "
-              # f"Elapsed {file['elapsed']}. "
-              # f"ETA: {file['eta']}. "
-              )
-        pass
+        # print(f"Downloading: {file['filename']}. "
+        #       f"Progress: {progress}%. "
+        #       # f"Speed {file['speed']}. "
+        #       # f"Elapsed {file['elapsed']}. "
+        #       # f"ETA: {file['eta']}. "
+        #       )
 
 
 def clear_title(title_string):
-    output_string = re.sub(r"[^a-zA-Zа-яА-Я0-9\s]+", "", title_string)  # Remove non-alphanumeric characters
+    output_string = re.sub(
+        r"[^\w\u0400-\u04FF\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\u0100-\u024F\u1E00-\u1EFF\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u2000-\u206F\u2070-\u209F\u20A0-\u20CF\u2100-\u214F\u2150-\u218F\u2190-\u21FF]+",
+        " ", title_string)
+    # output_string = re.sub(r"[^a-zA-Zа-яА-Я0-9\s]+", "", title_string)  # Remove non-alphanumeric characters
     output_string = re.sub(r"\s{2,}", " ", output_string)  # Replace multiple spaces with single space
     output_string = re.sub(r"\s+", "_", output_string)  # Replace single spaces with underscore
     return output_string

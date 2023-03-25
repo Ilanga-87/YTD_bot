@@ -1,5 +1,5 @@
 about_bot = """
-The bot that will help you to download mp3 files from YouTube videos if next formats: mp3, wav, flac, aac, m4a.
+The bot that will help you to download mp3 files from YouTube videos if next formats: mp3, wav, flac, m4a.
 """
 
 description = """
@@ -11,7 +11,7 @@ To select file format you should just press the button.
 messages = {
     "en": {
         "welcome_text": """
-        Hi! I will download for you sound from YouTube videos in any of next format: mp3, wav, flac, aac, m4a.
+        Hi! I will download for you sound from YouTube videos in any of next format: mp3, wav, flac, m4a.
 To start you should input youtube url.
 Than select necessary format and enjoy!
 If you need more information please look at /help.
@@ -32,7 +32,7 @@ If you need more information please look at /help.
         Sorry, I didn't understand that command. May be /help can be useful for you.
         """,
         "ready_notification_text": """
-        It's ready
+        It's ready ⬇️⬇️⬇️
         """,
         "select_format_text": """
         Select preferred audio format to download: 
@@ -42,11 +42,19 @@ If you need more information please look at /help.
         """,
         "check_url_text": """
         Please check copied URL.
+        """,
+        "wrong_url_text": """
+        Sorry, something went wrong when sending the file to the chat. 
+We will definitely figure out what the problem is. 
+In the meantime, you can send another link. 
+        """,
+        "you_tube_error_text": """
+        Sorry, the YouTube server is not responding. We hope it's temporary, please try again later.
         """
     },
     "ru": {
         "welcome_text": """
-        Приветствую! Здесь вы можете скачать аудио с YouTube в любом из этих форматов: mp3, wav, flac, aac, m4a.
+        Приветствую! Здесь вы можете скачать аудио с YouTube в любом из этих форматов: mp3, wav, flac, m4a.
 Чтобы начать, просто отправьте боту ссылку. Потом выберите формат и немного подождите.
 Если вам нужна помощь, в любой момент отправьте боту команду /help.
         """,
@@ -66,7 +74,7 @@ If you need more information please look at /help.
         Извините, я не знаю такой команды.
         """,
         "ready_notification_text": """
-        Готово
+        Готово ⬇️⬇️⬇️
         """,
         "select_format_text": """
         Выберите формат для вашего аудио файла перед скачиванием: 
@@ -76,12 +84,19 @@ If you need more information please look at /help.
         """,
         "check_url_text": """
         Пожалуйста, вставьте правильную ссылку на YouTube.
+        """,
+        "wrong_url_text": """
+Извините, что-то пошло не так при отправке файла в чат. Мы обязательно разберемся, в чем проблема. 
+Пока вы можете отправить другую ссылку. 
+        """,
+        "you_tube_error_text": """
+        Извините, сервер youtube не отвечает. Надеемся, это ненадолго, попробуйте снова чуть позже. 
         """
     }
 }
 
 welcome_text = """
-Hi! I will download for you sound from YouTube videos in any of next format: mp3, wav, flac, aac, m4a.
+Hi! I will download for you sound from YouTube videos in any of next format: mp3, wav, flac, m4a.
 To start you should input youtube url.
 Than select necessary format and enjoy!
 If you need more information please look at /help.
