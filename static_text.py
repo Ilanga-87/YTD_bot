@@ -15,6 +15,9 @@ messages = {
 To start you should input youtube url.
 Than select necessary format and enjoy!
 If you need more information please look at /help.
+
+Please note that Telegram does not allow sending files larger than 50 MB to bots. 
+Therefore, if the file is very large, it will need to be compressed. Thank you for your understanding.
         """,
         "select_lang_text": """
         Select language: 
@@ -50,6 +53,12 @@ In the meantime, you can send another link.
         """,
         "you_tube_error_text": """
         Sorry, the YouTube server is not responding. We hope it's temporary, please try again later.
+        """,
+        "file_too_long_text": """
+        Sorry, the file {} is too long: {}. Bot cannot convert it to size allowed Telegram (50M).
+        """,
+        "need_compress_text": """
+        The file {} is too big to download it in uncompressed formats. Recommend to download it as mp3.
         """
     },
     "ru": {
@@ -57,6 +66,9 @@ In the meantime, you can send another link.
         Приветствую! Здесь вы можете скачать аудио с YouTube в любом из этих форматов: mp3, wav, flac, m4a.
 Чтобы начать, просто отправьте боту ссылку. Потом выберите формат и немного подождите.
 Если вам нужна помощь, в любой момент отправьте боту команду /help.
+
+Обратите внимание, что Телеграм не позволяет отправлять боту файлы более 50 м. 
+Поэтому, если файл очень большой, его придется сжать. Благодарим за понимание.
         """,
         "select_lang_text": """
         Выберите язык: 
@@ -91,6 +103,12 @@ In the meantime, you can send another link.
         """,
         "you_tube_error_text": """
         Извините, сервер youtube не отвечает. Надеемся, это ненадолго, попробуйте снова чуть позже. 
+        """,
+        "file_too_long_text": """
+        Извините, выбранное видео {} слишком длинное: {}. Даже при сильном сжатии оно больше разрешенных Телеграм 50 мегабайт. 
+        """,
+        "need_compress_text": """
+        Видео {} превышает лимиты Телеграм для отправки ботом при конвертации с несжимаемые форматы. Рекомендуется конвертация в mp3.
         """
     }
 }

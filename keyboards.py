@@ -18,3 +18,11 @@ def lang_keyboard():
             InlineKeyboardButton("Русский", callback_data=f"{SELECT_LANGUAGE}.ru")
         ]
     ])
+
+
+def mp3_keyboard():
+    return InlineKeyboardMarkup([
+        [
+            InlineKeyboardButton("MP3", callback_data=f"{SELECT_FORMAT}.mp3")
+        ]
+    ])

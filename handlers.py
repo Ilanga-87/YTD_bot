@@ -1,10 +1,9 @@
-from yt_dlp.utils import YoutubeDLError
-from telegram.error import NetworkError, TelegramError, BadRequest
+from telegram.error import NetworkError, BadRequest
 
-from errors import validate_input, is_supported
-from static_text import messages, welcome_text, wait_text, help_text, undefined_command_text, messages
-from service import get_info, download
-from keyboards import formats_keyboard, lang_keyboard
+from errors import is_supported
+from static_text import wait_text, messages
+from service import get_info, download, download_long
+from keyboards import formats_keyboard, lang_keyboard, mp3_keyboard
 from manage_data import id_dict
 import manage_data
 
@@ -28,7 +27,8 @@ async def language_handler(update, context):
 
 
 async def audio_url_handler(update, context):
-    """Send a message when the command /download_mp3 is issued."""
+    manage_data.huge_file_flag = False
+    manage_data.long_file_flag = False
     nick, name, user_id, lang, date = update.message.from_user.username, update.message.from_user.first_name, \
                                       update.message.from_user.id, update.message.from_user.language_code, \
                                       update.message.date
@@ -44,15 +44,30 @@ async def audio_url_handler(update, context):
     if is_supported(user_link):
         await update.message.reply_text(messages[manage_data.selected_language]["wait_text"])
         message = get_info(message_id, user_link)
-        await context.bot.edit_message_text(
-            chat_id=update.message.chat_id,
-            message_id=update.message.message_id + 1,  # +1
-            text=message
-        )
-        await update.message.reply_text(
-            text=messages[manage_data.selected_language]["select_format_text"],
-            reply_markup=formats_keyboard()
-        )
+        if not manage_data.huge_file_flag:
+            await context.bot.edit_message_text(
+                chat_id=update.message.chat_id,
+                message_id=update.message.message_id + 1,  # +1
+                text=message
+            )
+            if not manage_data.long_file_flag:
+                await update.message.reply_text(
+                    text=messages[manage_data.selected_language]["select_format_text"],
+                    reply_markup=formats_keyboard()
+                )
+            else:
+                await context.bot.edit_message_text(
+                    chat_id=update.message.chat_id,
+                    message_id=update.message.message_id + 1,  # +1
+                    text=message,
+                    reply_markup=mp3_keyboard()
+                )
+        else:
+            await context.bot.edit_message_text(
+                chat_id=update.message.chat_id,
+                message_id=update.message.message_id + 1,  # +1
+                text=message
+            )
     else:
         await update.message.reply_text(messages[manage_data.selected_language]["check_url_text"])
 
@@ -78,9 +93,15 @@ async def audio_url_handler(update, context):
 
 async def format_download_handler(update, context):
     message_id = update.callback_query.message.message_id
+    print(message_id)
+    print(id_dict)
+    print(manage_data.long_file_flag)
     await update.callback_query.message.edit_text(wait_text)
     audio_format = update.callback_query["data"].split(".")[-1]
-    audio_file = download(id_dict[message_id-2][0], id_dict[message_id-2][1], audio_format)
+    if manage_data.long_file_flag:
+        audio_file = download_long(id_dict[message_id-1][0], id_dict[message_id-1][1], audio_format)
+    else:
+        audio_file = download(id_dict[message_id-2][0], id_dict[message_id-2][1], audio_format)
 
     print(audio_file)
     try:
@@ -94,23 +115,30 @@ async def format_download_handler(update, context):
                                         read_timeout=7200,
                                         write_timeout=7200
                                         )
+        # id_dict[message_id - 2].append("Success")
+        print(id_dict)
+        with open("log_success.csv", "a", encoding="windows-1251") as log:
+            for k, v in id_dict.items():
+                k = str(k)
+                if len(v) == 3:
+                    stroke = f"{str(k)},{v[0]},{v[1]},{v[2]}\n"
+                    log.write(stroke)
+                if len(v) == 2:
+                    stroke = f"{str(k)},{v[0]},{v[1]}\n"
+                    log.write(stroke)
     except BadRequest:
         await context.bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id,  # +1
             text=messages[manage_data.selected_language]["wrong_url_text"]
         )
-    id_dict[message_id-2].append("Success")
-    print(id_dict)
-    with open("log_success.csv", "a", encoding="windows-1251") as log:
-        for k, v in id_dict.items():
-            k = str(k)
-            if len(v) == 3:
-                stroke = f"{str(k)},{v[0]},{v[1]},{v[2]}\n"
-                log.write(stroke)
-            if len(v) == 2:
-                stroke = f"{str(k)},{v[0]},{v[1]}\n"
-                log.write(stroke)
+    except NetworkError:
+        await context.bot.edit_message_text(
+            chat_id=update.callback_query.message.chat_id,
+            message_id=update.callback_query.message.message_id,  # +1
+            text=messages[manage_data.selected_language]["wrong_url_text"]
+        )
+
 
     # with open("log_file.csv", "a") as log:
     #     log.write("Success!\n")

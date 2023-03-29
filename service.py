@@ -1,6 +1,6 @@
 import os
 import re
-import csv
+from pydub import AudioSegment
 
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import YoutubeDLError
@@ -23,6 +23,16 @@ def get_info(message_id, url):
             new_title = clear_title(title)
             id_dict[message_id].append(new_title)
             duration = video_info['duration']
+            output_duration = get_output_duration(duration)
+            if duration > 4000:
+                manage_data.huge_file_flag = True
+                message = f"{messages[manage_data.selected_language]['file_too_long_text']}"
+                return message.format(title, output_duration)
+            if duration > 1200:
+                manage_data.long_file_flag = True
+                message = f"{messages[manage_data.selected_language]['need_compress_text']}"
+                return message.format(title)
+                # return f"{messages[manage_data.selected_language]['audio_name_text']} \n{title} ({output_duration})"
             output_duration = get_output_duration(duration)
             return f"{messages[manage_data.selected_language]['audio_name_text']} \n{title} ({output_duration})"
 
@@ -65,7 +75,7 @@ def download(url, title, ext):
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': ext,
-            'preferredquality': 'bestaudio',
+            'preferredquality': 'bestaudio[filesize<50M]',
         }],
         'logger': YTDLogger(),
         'progress_hooks': [progress_hook],
@@ -75,6 +85,47 @@ def download(url, title, ext):
             track_url = extract_single_from_playlist(url)
             if not check_file_on_server(title + '.' + ext):
                 ydl.download([track_url])
+
+                # Check it size
+                file_size = os.path.getsize(f'uploads/audio/{title}.{ext}')
+                if file_size > 5000000:
+                    print(f"{title} SIZE: {file_size}")
+                    return compress_file(title, ext)
+                else:
+                    return f"uploads/audio/{title}.{ext}"
+            return f"uploads/audio/{title}.{ext}"
+    except YoutubeDLError as e:
+        # error_text = str(e).split(": ")[-1].strip()
+        return f"{messages[manage_data.selected_language]['you_tube_error_text']}"
+
+
+def download_long(url, title, ext):
+    ytdl_opts = {
+        "quiet": True,
+        'cachedir': False,
+        'outtmpl': f'uploads/audio/{title}.%(ext)s',
+        'format': 'worstaudio/worst',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': ext,
+            'preferredquality': 'worstaudio[filesize<50M]',
+        }],
+        'logger': YTDLogger(),
+        'progress_hooks': [progress_hook],
+    }
+    try:
+        with YoutubeDL(ytdl_opts) as ydl:
+            track_url = extract_single_from_playlist(url)
+            if not check_file_on_server(title + '.' + ext):
+                ydl.download([track_url])
+
+                # Check it size
+                file_size = os.path.getsize(f'uploads/audio/{title}.{ext}')
+                if file_size > 50 * 1024 * 1024:
+                    print(f"{title} SIZE: {file_size}")
+                    return compress_file(title, ext)
+                else:
+                    return f"uploads/audio/{title}.{ext}"
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
         # error_text = str(e).split(": ")[-1].strip()
@@ -114,18 +165,55 @@ def progress_hook(file):
 
 
 def clear_title(title_string):
-    output_string = re.sub(
-        r"[^\w\u0400-\u04FF\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\u0100-\u024F\u1E00-\u1EFF\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u2000-\u206F\u2070-\u209F\u20A0-\u20CF\u2100-\u214F\u2150-\u218F\u2190-\u21FF]+",
-        " ", title_string)
-    # output_string = re.sub(r"[^a-zA-Zа-яА-Я0-9\s]+", "", title_string)  # Remove non-alphanumeric characters
+    # output_string = re.sub(
+    #     r"[^\w\u0400-\u04FF\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF\u0100-\u024F\u1E00-\u1EFF\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF\u2000-\u206F\u2070-\u209F\u20A0-\u20CF\u2100-\u214F\u2150-\u218F\u2190-\u21FF]+",
+    #     " ", title_string)
+    output_string = re.sub(r"[^a-zA-Zа-яА-Я0-9\s]+", "", title_string)  # Remove non-alphanumeric characters
     output_string = re.sub(r"\s{2,}", " ", output_string)  # Replace multiple spaces with single space
     output_string = re.sub(r"\s+", "_", output_string)  # Replace single spaces with underscore
     return output_string
 
 
-if __name__ == '__main__':
-    get_info("https://www.youtube.com/watch?v=ktvTqknDobU")
+def compress_file(file_name, file_ext):
+    # Define the input and output file paths
+    input_file = f"uploads/audio/{file_name}.{file_ext}"
+    legacy_file = f"uploads/audio/{file_name}_old.{file_ext}"
+    output_file = f"uploads/audio/{file_name}.{file_ext}"
 
+    # Load the audio file
+    audio = AudioSegment.from_file(input_file)
+    os.rename(input_file, legacy_file)
+
+    # Set the output format and initial compression options
+    output_format = file_ext
+    compression_options = {'bitrate': '128k'}
+
+    # Iterate over compression options until desired file size is reached
+    max_file_size = 50 * 1024 * 1024  # 50 megabytes in bytes
+    while True:
+        # Export the compressed audio to a temporary file
+        temp_output_file = f"uploads/audio/{file_name}_p.{file_ext}"
+        audio.export(temp_output_file, format=output_format, bitrate=compression_options['bitrate'])
+
+        # Check the size of the temporary file
+        temp_file_size = os.path.getsize(temp_output_file)
+        print(f"{file_name} SIZE: {temp_file_size}")
+        # If the temporary file is within the desired file size, save it as the final output file and exit the loop
+        if temp_file_size <= max_file_size:
+            os.rename(temp_output_file, output_file)
+            break
+
+        # If the temporary file is too large, reduce the compression options and try again
+        compression_options['bitrate'] = str(int(int(compression_options['bitrate'][:-1]) * 0.7)) + 'k'
+        print(f"Current bitrate: {compression_options['bitrate']}")
+        print(output_file)
+    return output_file
+
+
+if __name__ == '__main__':
+
+    stripped = "Rainy Forest Sounds for Sleeping, Meditation and Study 🌧️ 3 Hours White Noise Gentle Rain (03:02:06)".split("(")[-1][:-1]
+    print(stripped)
     progress_hooks_info = """
     progress_hooks:    A list of functions that get called on download
  |                     progress, with a dictionary with the entries
