@@ -32,5 +32,3 @@ application.add_handler(help_handler)
 application.add_handler(unknown_handler)
 
 application.run_polling()
-
-# TODO: 3. Multilang
