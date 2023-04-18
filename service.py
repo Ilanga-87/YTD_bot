@@ -37,7 +37,8 @@ def get_info(message_id, url):
             return f"{messages[manage_data.selected_language]['audio_name_text']} \n{title} ({output_duration})"
 
     except YoutubeDLError as e:
-        # error_text = str(e).split(": ")[-1].strip()
+        error_text = str(e).split(": ")[-1].strip()
+        print(error_text)
         return f"{messages[manage_data.selected_language]['check_url_text']}"
 
 
@@ -95,7 +96,8 @@ def download(url, title, ext):
                     return f"uploads/audio/{title}.{ext}"
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
-        # error_text = str(e).split(": ")[-1].strip()
+        error_text = str(e).split(": ")[-1].strip()
+        print(error_text)
         return f"{messages[manage_data.selected_language]['you_tube_error_text']}"
 
 
@@ -128,7 +130,8 @@ def download_long(url, title, ext):
                     return f"uploads/audio/{title}.{ext}"
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
-        # error_text = str(e).split(": ")[-1].strip()
+        error_text = str(e).split(": ")[-1].strip()
+        print(error_text)
         return f"{messages[manage_data.selected_language]['you_tube_error_text']}"
 
 

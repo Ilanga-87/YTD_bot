@@ -116,6 +116,11 @@ async def format_download_handler(update, context):
                                         write_timeout=7200
                                         )
         # id_dict[message_id - 2].append("Success")
+        if id_dict.get(message_id - 2, None) is None:
+            id_dict[message_id - 1].append("Success")
+        else:
+            id_dict[message_id - 2].append("Success")
+
         print(id_dict)
         with open("log_success.csv", "a", encoding="windows-1251") as log:
             for k, v in id_dict.items():
@@ -126,23 +131,22 @@ async def format_download_handler(update, context):
                 if len(v) == 2:
                     stroke = f"{str(k)},{v[0]},{v[1]}\n"
                     log.write(stroke)
-    except BadRequest:
+    except BadRequest as br_error:
+        error_text = str(br_error).split(": ")[-1].strip()
+        print(error_text)
         await context.bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id,  # +1
             text=messages[manage_data.selected_language]["wrong_url_text"]
         )
-    except NetworkError:
+    except NetworkError as ne:
+        error_text = str(ne).split(": ")[-1].strip()
+        print(error_text)
         await context.bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id,  # +1
             text=messages[manage_data.selected_language]["wrong_url_text"]
         )
-
-
-    # with open("log_file.csv", "a") as log:
-    #     log.write("Success!\n")
-    # print("Success!")
 
 
 # Standard functionality
