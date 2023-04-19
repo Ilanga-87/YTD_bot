@@ -37,12 +37,13 @@ async def audio_url_handler(update, context):
     #       f"Request text: {user_link}")
     # print(update.message.date)
     manage_data.id_dict[message_id] = []
+    manage_data.id_dict[message_id].append(user_link)
     manage_data.id_dict[message_id].append(nick)
     manage_data.id_dict[message_id].append(name)
     manage_data.id_dict[message_id].append(user_id)
     manage_data.id_dict[message_id].append(lang)
     manage_data.id_dict[message_id].append(date)
-    manage_data.id_dict[message_id].append(user_link)
+
     with open("log_file.csv", "a", encoding="windows-1251") as log:
         log.write(f"{date},{nick},{name},{user_id},{lang},{user_link}\n")
     if is_supported(user_link):
@@ -174,7 +175,7 @@ async def format_download_handler(update, context):
         await context.bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
             message_id=update.callback_query.message.message_id,  # +1
-            text=messages[manage_data.selected_language]["wrong_url_text"]
+            text=messages[manage_data.selected_language]["you_tube_error_text"]
         )
 
 
