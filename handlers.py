@@ -4,7 +4,6 @@ from errors import is_supported
 from static_text import wait_text, messages
 from service import get_info, download, download_long
 from keyboards import formats_keyboard, lang_keyboard, mp3_keyboard
-from manage_data import id_dict
 import manage_data
 
 
@@ -37,8 +36,9 @@ async def audio_url_handler(update, context):
     # print(f"Request from USER {nick} (first name is {name}). User id {user_id}, language {lang}. "
     #       f"Request text: {user_link}")
     # print(update.message.date)
-    id_dict[message_id] = []
-    id_dict[message_id].append(user_link)
+    manage_data.id_dict[message_id] = []
+    manage_data.id_dict[message_id].append(nick, name, user_id, lang, date)
+    manage_data.id_dict[message_id].append(user_link)
     with open("log_file.csv", "a", encoding="windows-1251") as log:
         log.write(f"{date},{nick},{name},{user_id},{lang},{user_link}\n")
     if is_supported(user_link):
@@ -94,14 +94,13 @@ async def audio_url_handler(update, context):
 async def format_download_handler(update, context):
     message_id = update.callback_query.message.message_id
     print(message_id)
-    print(id_dict)
-    print(manage_data.long_file_flag)
+    print(f"The file is long: {manage_data.long_file_flag}")
     await update.callback_query.message.edit_text(wait_text)
     audio_format = update.callback_query["data"].split(".")[-1]
     if manage_data.long_file_flag:
-        audio_file = download_long(id_dict[message_id-1][0], id_dict[message_id-1][1], audio_format)
+        audio_file = download_long(manage_data.id_dict[message_id-1][0], manage_data.id_dict[message_id-1][1], audio_format)
     else:
-        audio_file = download(id_dict[message_id-2][0], id_dict[message_id-2][1], audio_format)
+        audio_file = download(manage_data.id_dict[message_id-2][0], manage_data.id_dict[message_id-2][1], audio_format)
 
     print(audio_file)
     try:
@@ -115,15 +114,15 @@ async def format_download_handler(update, context):
                                         read_timeout=7200,
                                         write_timeout=7200
                                         )
-        # id_dict[message_id - 2].append("Success")
-        if id_dict.get(message_id - 2, None) is None:
-            id_dict[message_id - 1].append("Success")
+        # manage_data.id_dict[message_id - 2].append("Success")
+        if manage_data.id_dict.get(message_id - 2, None) is None:
+            manage_data.id_dict[message_id - 1].append("Success")
         else:
-            id_dict[message_id - 2].append("Success")
+            manage_data.id_dict[message_id - 2].append("Success")
 
-        print(id_dict)
-        with open("log_success.csv", "a", encoding="windows-1251") as log:
-            for k, v in id_dict.items():
+        print(manage_data.id_dict)
+        with open("log_success.csv", "w", encoding="windows-1251") as log:
+            for k, v in manage_data.id_dict.items():
                 k = str(k)
                 if len(v) == 3:
                     stroke = f"{str(k)},{v[0]},{v[1]},{v[2]}\n"
@@ -133,6 +132,19 @@ async def format_download_handler(update, context):
                     log.write(stroke)
     except BadRequest as br_error:
         error_text = str(br_error).split(": ")[-1].strip()
+        if manage_data.id_dict.get(message_id - 2, None) is None:
+            manage_data.id_dict[message_id - 1].append(error_text)
+        else:
+            manage_data.id_dict[message_id - 2].append(error_text)
+        with open("log_success.csv", "w", encoding="windows-1251") as log:
+            for k, v in manage_data.id_dict.items():
+                k = str(k)
+                if len(v) == 3:
+                    stroke = f"{str(k)},{v[0]},{v[1]},{v[2]}\n"
+                    log.write(stroke)
+                if len(v) == 2:
+                    stroke = f"{str(k)},{v[0]},{v[1]}\n"
+                    log.write(stroke)
         print(error_text)
         await context.bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
@@ -141,6 +153,19 @@ async def format_download_handler(update, context):
         )
     except NetworkError as ne:
         error_text = str(ne).split(": ")[-1].strip()
+        if manage_data.id_dict.get(message_id - 2, None) is None:
+            manage_data.id_dict[message_id - 1].append(error_text)
+        else:
+            manage_data.id_dict[message_id - 2].append(error_text)
+        with open("log_success.csv", "w", encoding="windows-1251") as log:
+            for k, v in manage_data.id_dict.items():
+                k = str(k)
+                if len(v) == 3:
+                    stroke = f"{str(k)},{v[0]},{v[1]},{v[2]}\n"
+                    log.write(stroke)
+                if len(v) == 2:
+                    stroke = f"{str(k)},{v[0]},{v[1]}\n"
+                    log.write(stroke)
         print(error_text)
         await context.bot.edit_message_text(
             chat_id=update.callback_query.message.chat_id,
