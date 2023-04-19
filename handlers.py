@@ -103,9 +103,9 @@ async def format_download_handler(update, context):
     await update.callback_query.message.edit_text(wait_text)
     audio_format = update.callback_query["data"].split(".")[-1]
     if manage_data.long_file_flag:
-        audio_file = download_long(manage_data.id_dict[message_id-1][0], manage_data.id_dict[message_id-1][1], audio_format)
+        audio_file = download_long(manage_data.id_dict[message_id-1][0], manage_data.id_dict[message_id-1][6], audio_format)
     else:
-        audio_file = download(manage_data.id_dict[message_id-2][0], manage_data.id_dict[message_id-2][1], audio_format)
+        audio_file = download(manage_data.id_dict[message_id-2][0], manage_data.id_dict[message_id-2][6], audio_format)
 
     print(audio_file)
     try:
