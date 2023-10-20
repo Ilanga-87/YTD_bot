@@ -1,11 +1,17 @@
 about_bot = """
-The bot that will help you to download mp3 files from YouTube videos if next formats: mp3, wav, flac, m4a.
+The bot that will help you to download audio files from YouTube videos
 """
 
 description = """
-This bot downloads mp3 files from YouTube videos. 
-To start downloading you should input youtube url.
-To select file format you should just press the button.
+This bot downloads audio files from YouTube videos. 
+To start downloading input youtube url.
+To select file format press the button.
+Please note that Telegram does not allow bots to send files larger than 50 MB. 
+Too large files need to be compressed. Thank you for your understanding.
+
+If you want to download file more than 50 MB, you can visit https://mp3-from-youtube.com/.
+If you face any trouble with bot or site, you can write a bug report here: https://t.me/yttab_discussion
+
 """
 
 messages = {
@@ -30,6 +36,8 @@ Therefore, if the file is very large, it will need to be compressed. Thank you f
         """,
         "help_text": """
         You can start download just by pasting YouTube url. Then you should select audio format for your file.
+If you want to download file more than 50 MB, you can visit https://mp3-from-youtube.com/.
+If you face any trouble with bot or site, you can write a bug report here: https://t.me/yttab_discussion
         """,
         "undefined_command_text": """
         Sorry, I didn't understand that command. May be /help can be useful for you.
@@ -81,6 +89,8 @@ In the meantime, you can send another link.
         """,
         "help_text": """
         Просто отправьте боту ссылку на видео в YouTube и выберите нужный аудио формат.
+Если вы хотите скачать файл больше 50 MB, вы можете воспользоваться сайтом https://mp3-from-youtube.com/.
+Если вы столкнулись с какими-то проблемами, пишите: https://t.me/yttab_discussion
         """,
         "undefined_command_text": """
         Извините, я не знаю такой команды.

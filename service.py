@@ -8,6 +8,9 @@ from yt_dlp.utils import YoutubeDLError
 from static_text import messages
 from manage_data import id_dict
 import manage_data
+import YTD_logger
+
+logger = YTD_logger.get_logger(__name__)
 
 
 def get_info(message_id, url):
@@ -38,7 +41,7 @@ def get_info(message_id, url):
 
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
-        print(error_text)
+        logger.info(f"{error_text}")
         return f"{messages[manage_data.selected_language]['check_url_text']}"
 
 
@@ -97,7 +100,7 @@ def download(url, title, ext):
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
-        print(error_text)
+        logger.info(f"{error_text}")
         return f"{messages[manage_data.selected_language]['you_tube_error_text']}"
 
 
@@ -131,7 +134,7 @@ def download_long(url, title, ext):
             return f"uploads/audio/{title}.{ext}"
     except YoutubeDLError as e:
         error_text = str(e).split(": ")[-1].strip()
-        print(error_text)
+        logger.info(f"{error_text}")
         return f"{messages[manage_data.selected_language]['you_tube_error_text']}"
 
 
@@ -157,8 +160,7 @@ class YTDLogger(object):
 def progress_hook(file):
     if file['status'] == 'finished':
         print(f"Done {file['filename']} downloading, now post-processing ...")
-    if file['status'] == 'downloading':
-        progress = file['downloaded_bytes'] * 100 / file['total_bytes_estimate']
+
         # print(f"Downloading: {file['filename']}. "
         #       f"Progress: {progress}%. "
         #       # f"Speed {file['speed']}. "
