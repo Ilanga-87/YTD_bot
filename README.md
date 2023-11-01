@@ -1,7 +1,7 @@
 # YouTube_to_AudioBot
 
 Telegram bot for downloading audio files from YouTube. Supporting formats: mp3, flac, wav, m4a.
-
+To use bot without installation: https://t.me/YouTube_to_AudioBot or @YouTube_to_AudioBot
 
 ## Description
 
