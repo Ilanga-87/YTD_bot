@@ -16,7 +16,6 @@ RUN addgroup -S botop && adduser -S botop -G botop
 ENV HOME=/home/botop
 ENV APP_HOME=/home/botop/ytd_bot
 RUN mkdir $APP_HOME
-RUN mkdir $APP_HOME/staticfiles
 RUN mkdir $APP_HOME/uploads && mkdir $APP_HOME/uploads/audio
 WORKDIR $APP_HOME
 
